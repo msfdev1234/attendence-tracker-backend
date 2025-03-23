@@ -1,5 +1,6 @@
 // models/userModel.js (User Model)
 const db = require('../database/database.js');
+const bcrypt = require('bcrypt'); // For password hashing
 
 const UserModel = {
     getAllUsers: async () => {
@@ -8,23 +9,28 @@ const UserModel = {
     },
 
     getUserById: async (id) => {
-        const sql = 'SELECT * FROM Users WHERE id = ?';
+        const sql = 'SELECT * FROM Users WHERE user_id = ?';
         return db.executeQuery(sql, [id]);
     },
 
-    createUser: async (user) => {
-        const sql = 'INSERT INTO attendence_mgmt_db.Users (name, email) VALUES (?, ?)';
-        return db.executeQuery(sql, [user.name, user.email]);
-    },
 
     updateUser: async (id, user) => {
-        const sql = 'UPDATE users SET name = ?, email = ? WHERE id = ?';
+        const sql = 'UPDATE users SET name = ?, email = ? WHERE user_id = ?';
         return db.executeQuery(sql, [user.name, user.email, id]);
     },
 
     deleteUser: async (id) => {
-        const sql = 'DELETE FROM users WHERE id = ?';
+        const sql = 'DELETE FROM users WHERE user_id = ?';
         return db.executeQuery(sql, [id]);
+    },
+    createUser: async (user) => {
+        const hashedPassword = await bcrypt.hash(user.password, 10);
+        const sql = 'INSERT INTO users (name, email, password) VALUES (?, ?, ?)';
+        return db.executeQuery(sql, [user.name, user.email, hashedPassword]);
+    },
+    getUserByEmail: async (email) => {
+        const sql = 'SELECT * FROM users WHERE email = ?';
+        return db.executeQuery(sql, [email]);
     },
 };
 

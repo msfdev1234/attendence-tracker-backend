@@ -8,19 +8,15 @@ CREATE TABLE Users (
                        role ENUM('Professor', 'Student') NOT NULL
 );
 
-CREATE TABLE Courses (
-                         course_id VARCHAR(10) PRIMARY KEY,
-                         course_name VARCHAR(100) NOT NULL,
-                         professor_id INT,
-                         FOREIGN KEY (professor_id) REFERENCES Users(user_id)
+drop table courses,StudentCourses;
+CREATE TABLE courses (
+                         id INT AUTO_INCREMENT PRIMARY KEY,
+                         name VARCHAR(255) NOT NULL,
+                         code VARCHAR(10) UNIQUE NOT NULL,
+                         professor_id INT, -- Foreign key to users table
+                         FOREIGN KEY (professor_id) REFERENCES users(user_id)
 );
-CREATE TABLE StudentCourses (
-                                student_id INT,
-                                course_id VARCHAR(10),
-                                PRIMARY KEY (student_id, course_id),
-                                FOREIGN KEY (student_id) REFERENCES Users(user_id),
-                                FOREIGN KEY (course_id) REFERENCES Courses(course_id)
-);
+
 CREATE TABLE Attendance (
                             attendance_id INT AUTO_INCREMENT PRIMARY KEY,
                             student_id INT,
